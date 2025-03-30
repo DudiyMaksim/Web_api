@@ -13,6 +13,7 @@ namespace Web_api.BLL.Services.Product
         public Task<bool> UpdateAsync(UpdateProductDto dto);
         public Task<bool> DeleteAsync(string id);
         public Task<ProductDto?> GetByIdAsync(string id);
+        public Task<ProductDto?> GetByPriceAsync(int from, int to);
         public  Task<IEnumerable<ProductDto>> GetAllAsync();
     }
 }

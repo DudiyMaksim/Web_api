@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Web_api.BLL.Dtos.Product;
 using Web_api.DAL;
 using Web_api.DAL.Entities;
@@ -8,21 +9,17 @@ namespace Web_api.BLL.Services.Product
     public class ProductService : IProductService
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductService(AppDbContext appDbContext)
+        public ProductService(AppDbContext appDbContext, IMapper mapper)
         {
             _context = appDbContext;
+            _mapper = mapper;
         }
 
         public async Task<bool> CreateAsync(CreateProductDto dto)
         {
-            var entity = new ProductEntity
-            {
-                Name = dto.Name,
-                Amount = dto.Amount,
-                Description = dto.Description,
-                Price = dto.Price
-            };
+            var entity = _mapper.Map<ProductEntity>(dto);
 
             await _context.Products.AddAsync(entity);
             var result = await _context.SaveChangesAsync();
@@ -48,14 +45,7 @@ namespace Web_api.BLL.Services.Product
         {
             var entities = await _context.Products.ToListAsync();
 
-            var dtos = entities.Select(e => new ProductDto
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Amount = e.Amount,
-                Description = e.Description,
-                Price = e.Price
-            });
+            var dtos = _mapper.Map<List<ProductDto>>(entities);
             return dtos;
         }
 
@@ -69,28 +59,24 @@ namespace Web_api.BLL.Services.Product
                 return null;
             }
 
-            var dto = new ProductDto
-            {
-                Id = entity.Id,
-                Amount = entity.Amount,
-                Description = entity.Description,
-                Price = entity.Price,
-                Name = entity.Name
-            };
+            var dto = _mapper.Map<ProductDto>(entity);
+
+            return dto;
+        }
+
+        public async Task<ProductDto?> GetByPriceAsync(int from, int to)
+        {
+            var entity = await _context.Products
+                .FirstOrDefaultAsync(p => p.Price >= from && p.Price <= to);
+
+            var dto = _mapper.Map<ProductDto?>(entity);
 
             return dto;
         }
 
         public async Task<bool> UpdateAsync(UpdateProductDto dto)
         {
-            var entity = new ProductEntity
-            {
-                Id = dto.Id,
-                Name = dto.Name,
-                Amount = dto.Amount,
-                Description = dto.Description,
-                Price = dto.Price
-            };
+            var entity = _mapper.Map<ProductEntity>(dto);
 
             _context.Products.Update(entity);
             var result = await _context.SaveChangesAsync();

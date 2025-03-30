@@ -3,22 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web_api.DAL.Entities
 {
-    public class ProductEntity
+    public class ProductEntity : BaseEntity<string>
     {
-        [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public override string Id { get; set; } = Guid.NewGuid().ToString();
         [Required]
         [MaxLength(255)]
         public required string Name { get; set; }
         [MaxLength]
         public string? Description { get; set; }
-        [Column(TypeName ="decimal(18, 2)")]
         [Range(0, double.MaxValue)]
-        public decimal? Price { get; set; }
-        public decimal? Amount { get; set; }
-
-        [ForeignKey("CategoryId")]
-        public string? CategoryId { get; set; }
-        public CategoryEntity? Category { get; set; }
+        public decimal Price { get; set; }
+        [Range(0, int.MaxValue)]
+        public int Amount { get; set; }
+        public ICollection<CategoryEntity> Categories { get; set; } = [];
+        public ICollection<ProductImageEntity> Images { get; set; } = [];
     }
 }

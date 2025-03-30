@@ -13,6 +13,7 @@ namespace Web_api.BLL.Dtos.Product
         public string? Description { get; set; }
         public decimal? Price { get; set; }
         public decimal? Amount { get; set; }
+        public List<string>? Categories { get; set; }
         public string? CategoryId {  get; set; }
     }
 }

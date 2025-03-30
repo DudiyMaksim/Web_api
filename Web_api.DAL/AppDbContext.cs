@@ -17,6 +17,7 @@ namespace Web_api.DAL
 
         public DbSet<CategoryEntity> Category { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
+        public DbSet<ProductImageEntity> ProductImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,11 +63,14 @@ namespace Web_api.DAL
                     .WithOne(e => e.Role)
                     .HasForeignKey(rc => rc.RoleId)
                     .IsRequired();
+            });
 
-                modelBuilder.Entity<ProductEntity>()
-                    .HasOne(p => p.Category)
-                    .WithMany(c => c.Products)
-                    .HasForeignKey(p => p.CategoryId);
+
+            modelBuilder.Entity<ProductEntity>(p =>
+            {
+                p.HasMany(e => e.Categories)
+                .WithMany(e => e.Products)
+                .UsingEntity("ProductCategories");
             });
         }
 
