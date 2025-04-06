@@ -18,6 +18,7 @@ namespace Web_api.DAL
         public DbSet<CategoryEntity> Category { get; set; }
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImageEntity> ProductImages { get; set; }
+        public DbSet<AccountImagesEntity> AccountImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

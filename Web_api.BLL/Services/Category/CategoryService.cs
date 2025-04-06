@@ -74,7 +74,7 @@ namespace Web_api.BLL.Services.Category
             return ServiceResponse.Error("Не вдалося видалити категорію");
         }
 
-        public async Task<List<CategoryDto>> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync()
         {
             var entities = await _categoryRepository
                 .GetAll()
@@ -82,7 +82,7 @@ namespace Web_api.BLL.Services.Category
 
             var dtos = _mapper.Map<List<CategoryDto>>(entities);
 
-            return dtos;
+            return ServiceResponse.Success("Категорії отримано", dtos);
         }
 
         public async Task<ServiceResponse> GetByIdAsync(string id)
@@ -98,16 +98,16 @@ namespace Web_api.BLL.Services.Category
             return ServiceResponse.Error("Категорію не знайдено");
         }
 
-        public async Task<CategoryDto?> GetByNameAsync(string name)
+        public async Task<ServiceResponse?> GetByNameAsync(string name)
         {
             var entity = await _categoryRepository.GetByNameAsync(name);
 
             if (entity != null)
             {
                 var dto = _mapper.Map<CategoryDto>(entity);
-                return dto;
+                return ServiceResponse.Success("Категорію отримано", dto);
             }
-            return null;
+            return ServiceResponse.Error("Категорію не знайдено");
         }
 
         public async Task<ServiceResponse> UpdateAsync(UpdateCategoryDto dto)

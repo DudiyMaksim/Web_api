@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Web_api.BLL.Dtos.Account;
 using Web_api.BLL.Services.Account;
-using spr311_web_api.DAL.Entities.Identity;
+using Web_api.BLL.Validators.Account;
 
 namespace Web_api.Controllers
 {
@@ -10,15 +10,25 @@ namespace Web_api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-
-        public AccountController(IAccountService accountService)
+        private readonly RegisterValidator _registerValidator;
+        private readonly LoginValidator _loginValidator;
+        public AccountController(IAccountService accountService, RegisterValidator registerValidator, LoginValidator loginValidator)
         {
             _accountService = accountService;
+            _registerValidator = registerValidator;
+            _loginValidator = loginValidator;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterDto dto)
         { 
+            var validResult = await _registerValidator.ValidateAsync(dto);
+
+            if (!validResult.IsValid)
+            {
+                return BadRequest(validResult.Errors);
+            }
+
             var user = await _accountService.RegisterAsync(dto);
 
             if (user == null)
@@ -32,6 +42,12 @@ namespace Web_api.Controllers
         [HttpGet("login")]
         public async Task<IActionResult> LoginAsync(LoginDto dto)
         {
+            var validResult = await _loginValidator.ValidateAsync(dto);
+            if (!validResult.IsValid)
+            {
+                return BadRequest(validResult.Errors);
+            }
+
             var user = await _accountService.LoginAsync(dto);
 
             if (user == null)

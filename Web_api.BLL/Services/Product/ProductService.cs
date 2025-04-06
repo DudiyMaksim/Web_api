@@ -17,70 +17,70 @@ namespace Web_api.BLL.Services.Product
             _mapper = mapper;
         }
 
-        public async Task<bool> CreateAsync(CreateProductDto dto)
+        public async Task<ServiceResponse> CreateAsync(CreateProductDto dto)
         {
             var entity = _mapper.Map<ProductEntity>(dto);
 
             await _context.Products.AddAsync(entity);
             var result = await _context.SaveChangesAsync();
-            return result > 0;
+            return ServiceResponse.Success("Продук створено");
         }
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task<ServiceResponse> DeleteAsync(string id)
         {
             var entity = await _context.Products
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (entity == null)
             {
-                return false;
+                return ServiceResponse.Error("Продук не знайдено");
             }
 
             _context.Products.Remove(entity);
             var result = await _context.SaveChangesAsync();
-            return result > 0;
+            return ServiceResponse.Success("Продук видалено");
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync()
         {
             var entities = await _context.Products.ToListAsync();
 
             var dtos = _mapper.Map<List<ProductDto>>(entities);
-            return dtos;
+            return ServiceResponse.Success("Продукти отримано", dtos);
         }
 
-        public async Task<ProductDto?> GetByIdAsync(string id)
+        public async Task<ServiceResponse> GetByIdAsync(string id)
         {
             var entity = await _context.Products
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (entity == null)
             {
-                return null;
+                return ServiceResponse.Error("Продук не знайдено");
             }
 
             var dto = _mapper.Map<ProductDto>(entity);
 
-            return dto;
+            return ServiceResponse.Success("Продук отримано", dto);
         }
 
-        public async Task<ProductDto?> GetByPriceAsync(int from, int to)
+        public async Task<ServiceResponse> GetByPriceAsync(int from, int to)
         {
             var entity = await _context.Products
                 .FirstOrDefaultAsync(p => p.Price >= from && p.Price <= to);
 
             var dto = _mapper.Map<ProductDto?>(entity);
 
-            return dto;
+            return ServiceResponse.Success("Продук отримано", dto);
         }
 
-        public async Task<bool> UpdateAsync(UpdateProductDto dto)
+        public async Task<ServiceResponse> UpdateAsync(UpdateProductDto dto)
         {
             var entity = _mapper.Map<ProductEntity>(dto);
 
             _context.Products.Update(entity);
             var result = await _context.SaveChangesAsync();
-            return result > 0;
+            return ServiceResponse.Success("Продук оновлено");
         }
     }
 }

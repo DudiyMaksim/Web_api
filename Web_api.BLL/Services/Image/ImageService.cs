@@ -55,7 +55,7 @@ namespace Web_api.BLL.Services.Image
             return null;
         }
 
-        public async Task<List<string>> SaveProductImagesAsync(List<IFormFile> images, string path)
+        public async Task<ServiceResponse> SaveProductImagesAsync(List<IFormFile> images, string path)
         {
             List<string> imagesName = new List<string>();
 
@@ -68,7 +68,7 @@ namespace Web_api.BLL.Services.Image
                 }
             }
 
-            return imagesName;
+            return ServiceResponse.Success("Картинки збережені");
         }
     }
 }

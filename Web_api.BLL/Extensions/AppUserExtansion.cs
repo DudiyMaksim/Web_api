@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using spr311_web_api.DAL.Entities.Identity;
 using Web_api.BLL.Dtos.Account;
+using Web_api.BLL.Services;
 using Web_api.BLL.Services.AppUserSer;
 
 namespace Web_api.BLL.Extensions
@@ -25,11 +26,11 @@ namespace Web_api.BLL.Extensions
         {
             await userService.DeleteAsync(dto);
         }
-        public static async Task<AppUser?> GetByIdAsync(this AppUser user, AppUserService userService, string id)
+        public static async Task<ServiceResponse> GetByIdAsync(this AppUser user, AppUserService userService, string id)
         { 
             return await userService.GetByIdAsync(id);
         }
-        public static async Task<List<AppUser>?> GetAllAsync(this AppUser user, AppUserService userService)
+        public static async Task<ServiceResponse> GetAllAsync(this AppUser user, AppUserService userService)
         {
             return await userService.GetAllAsync();
         }

@@ -10,6 +10,8 @@ using Web_api.BLL.Services.Category;
 using Web_api.DAL.Repositories.Category;
 using Web_api.BLL.Services.Image;
 using Web_api.BLL;
+using FluentValidation;
+using Web_api.BLL.Validators.Account;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +24,9 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddControllers();
+
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

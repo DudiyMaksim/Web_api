@@ -10,7 +10,7 @@ namespace Web_api.BLL.Services.Account
 {
     public interface  IAccountService
     {
-        Task<AppUser?> RegisterAsync(RegisterDto dto);
-        Task<AppUser?> LoginAsync(LoginDto dto);
+        Task<ServiceResponse> RegisterAsync(RegisterDto dto);
+        Task<ServiceResponse> LoginAsync(LoginDto dto);
     }
 }

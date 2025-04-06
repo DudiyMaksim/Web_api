@@ -10,10 +10,10 @@ namespace Web_api.BLL.Services.AppUserSer
 {
     public interface IAppUserService
     {
-        public Task CreateAsync(AppUserDto dto);
-        public Task UpdateAsync(AppUserDto dto);
-        public Task DeleteAsync(AppUserDto dto);
-        public Task<AppUser?> GetByIdAsync(string id);
-        public Task<List<AppUser>?> GetAllAsync();
+        public Task<ServiceResponse> CreateAsync(AppUserDto dto);
+        public Task<ServiceResponse> UpdateAsync(AppUserDto dto);
+        public Task<ServiceResponse> DeleteAsync(AppUserDto dto);
+        public Task<ServiceResponse> GetByIdAsync(string id);
+        public Task<ServiceResponse> GetAllAsync();
     }
 }

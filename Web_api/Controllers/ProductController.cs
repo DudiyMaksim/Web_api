@@ -38,14 +38,14 @@ namespace Web_api.Controllers
         public async Task<IActionResult> CreateAsync(CreateProductDto dto)
         {
             var result = await _productService.CreateAsync(dto);
-            return result ? Ok("Product created") : BadRequest("Product not created");
+            return result.IsSuccess ? Ok("Product created") : BadRequest("Product not created");
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateAsync(UpdateProductDto dto)
         {
             var result = await _productService.UpdateAsync(dto);
-            return result ? Ok("Product updated") : BadRequest("Product not updated");
+            return result.IsSuccess ? Ok("Product updated") : BadRequest("Product not updated");
         }
 
         [HttpDelete]
@@ -57,7 +57,7 @@ namespace Web_api.Controllers
             }
 
             var result = await _productService.DeleteAsync(id);
-            return result ? Ok("Product deleted") : BadRequest("Product not deleted");
+            return result.IsSuccess ? Ok("Product deleted") : BadRequest("Product not deleted");
         }
     }
 }

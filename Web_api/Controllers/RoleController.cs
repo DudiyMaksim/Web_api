@@ -19,7 +19,7 @@ namespace Web_api.Controllers
         {
             var result = await _roleService.CreateAsync(dto);
 
-            return result ? Ok("Role created") : BadRequest("Role not created");
+            return result.IsSuccess ? Ok("Role created") : BadRequest("Role not created");
         }
 
         [HttpPut]
@@ -27,7 +27,7 @@ namespace Web_api.Controllers
         {
             var result = await _roleService.UpdateAsync(dto);
 
-            return result ? Ok("Role updated") : BadRequest("Role not updated");
+            return result.IsSuccess ? Ok("Role updated") : BadRequest("Role not updated");
         }
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync(string? id)
@@ -39,7 +39,7 @@ namespace Web_api.Controllers
 
             var result = await _roleService.DeleteAsync(id);
 
-            return result ? Ok("Role was deleted") : BadRequest("Role was not deleted");
+            return result.IsSuccess ? Ok("Role was deleted") : BadRequest("Role was not deleted");
         }
         [HttpGet]
         public async Task<IActionResult> GetAsync(string? id)

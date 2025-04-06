@@ -7,8 +7,8 @@ namespace Web_api.BLL.Services.Category
         Task<ServiceResponse> CreateAsync(CreateCategoryDto dto);
         Task<ServiceResponse> UpdateAsync(UpdateCategoryDto dto);
         Task<ServiceResponse> DeleteAsync(string id);
-        Task<List<CategoryDto>> GetAllAsync();
+        Task<ServiceResponse> GetAllAsync();
         Task<ServiceResponse> GetByIdAsync(string id);
-        Task<CategoryDto> GetByNameAsync(string name);
+        Task<ServiceResponse> GetByNameAsync(string name);
     }
 }

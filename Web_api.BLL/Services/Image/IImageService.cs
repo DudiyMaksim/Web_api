@@ -11,6 +11,6 @@ namespace Web_api.BLL.Services.Image
     {
         Task<string?> SaveImageAsync(IFormFile image, string filePath);
         void DeleteImage(string directory);
-        Task<List<string>> SaveProductImagesAsync(List<IFormFile> images, string path);
+        Task<ServiceResponse> SaveProductImagesAsync(List<IFormFile> images, string path);
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using Web_api.BLL.Dtos.Account;
 using Web_api.BLL.Dtos.Category;
 using Web_api.BLL.Dtos.Product;
 using Web_api.BLL.Services.Category;
@@ -43,17 +45,29 @@ namespace Web_api.Controllers
         }
 
         [HttpGet]
-        public async Task<List<CategoryDto>> GetAsync(string? name)
+        public async Task<List<CategoryDto>?> GetAsync(string? name)
         {
 
             if (!string.IsNullOrEmpty(name))
             {
-                return  new List<CategoryDto> { await _categoryService.GetByNameAsync(name) };
+                var response = await _categoryService.GetByNameAsync(name);
+                var json = JsonSerializer.Serialize(response.Payload);
+                var categories = JsonSerializer.Deserialize<List<CategoryDto>>(json);
+                if(categories != null)
+                {
+                    return categories;
+                }
             }
 
 
             var result = await _categoryService.GetAllAsync();
-            return result;
+            var json1 = JsonSerializer.Serialize(result.Payload);
+            var categories1 = JsonSerializer.Deserialize<List<CategoryDto>>(json1);
+            if (categories1 != null)
+            {
+                return categories1;
+            }
+            return null;
         }
     }
 }

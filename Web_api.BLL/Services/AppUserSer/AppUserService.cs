@@ -16,7 +16,7 @@ namespace Web_api.BLL.Services.AppUserSer
             _userManager = userManager;
         }
 
-        public async Task CreateAsync(AppUserDto dto)
+        public async Task<ServiceResponse> CreateAsync(AppUserDto dto)
         {
             var user = new AppUser
             {
@@ -25,37 +25,41 @@ namespace Web_api.BLL.Services.AppUserSer
             };
 
             await _userManager.CreateAsync(user, dto.Password);
+            return ServiceResponse.Success("Клієнт створений");
         }
 
-        public async Task DeleteAsync(AppUserDto dto)
+        public async Task<ServiceResponse> DeleteAsync(AppUserDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.Name);
             if (user == null)
             {
-                return;
+                return ServiceResponse.Error("Клієнт не знайдений");
             }
 
             await _userManager.DeleteAsync(user);
+            return ServiceResponse.Success("Клієнт видалений");
         }
 
-        public async Task<List<AppUser>?> GetAllAsync()
+        public async Task<ServiceResponse> GetAllAsync()
         {
-            return await _userManager.Users.ToListAsync();
+            return ServiceResponse.Success("Товари отримано", await _userManager.Users.ToListAsync());
         }
 
-        public async Task<AppUser?> GetByIdAsync(string id)
+        public async Task<ServiceResponse> GetByIdAsync(string id)
         {
-            return await _userManager.FindByIdAsync(id);
+            await _userManager.FindByIdAsync(id);
+            return ServiceResponse.Success("Клієнт отримано");
         }
 
-        public async Task UpdateAsync(AppUserDto dto)
+        public async Task<ServiceResponse> UpdateAsync(AppUserDto dto)
         {
             var user = await _userManager.FindByNameAsync(dto.Name);
             if (user == null)
             {
-                return;
+                return ServiceResponse.Success("Клієнт не знайдено");
             }
             await _userManager.UpdateAsync(user);
+            return ServiceResponse.Success("Клієнт оновлений");
         }
     }
 }

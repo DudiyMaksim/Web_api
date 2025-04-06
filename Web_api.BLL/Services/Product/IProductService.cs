@@ -9,11 +9,11 @@ namespace Web_api.BLL.Services.Product
 {
     public interface IProductService
     {
-        public Task<bool> CreateAsync(CreateProductDto dto);
-        public Task<bool> UpdateAsync(UpdateProductDto dto);
-        public Task<bool> DeleteAsync(string id);
-        public Task<ProductDto?> GetByIdAsync(string id);
-        public Task<ProductDto?> GetByPriceAsync(int from, int to);
-        public  Task<IEnumerable<ProductDto>> GetAllAsync();
+        public Task<ServiceResponse> CreateAsync(CreateProductDto dto);
+        public Task<ServiceResponse> UpdateAsync(UpdateProductDto dto);
+        public Task<ServiceResponse> DeleteAsync(string id);
+        public Task<ServiceResponse> GetByIdAsync(string id);
+        public Task<ServiceResponse> GetByPriceAsync(int from, int to);
+        public Task<ServiceResponse> GetAllAsync();
     }
 }
