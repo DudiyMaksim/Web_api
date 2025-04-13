@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using spr311_web_api.DAL.Entities.Identity;
+using Web_api.BLL.Configuration;
 using Web_api.BLL.Dtos.Account;
+using Web_api.BLL.Services.EmailService;
 using Web_api.BLL.Services.Image;
 using Web_api.DAL.Entities;
+using System.Security.Claims;
+using Web_api.BLL.Services.Jwt;
+
 
 namespace Web_api.BLL.Services.Account
 {
@@ -17,12 +26,16 @@ namespace Web_api.BLL.Services.Account
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
         private readonly IImageService _imageService;
+        private readonly IEmailService _emailService;
+        private readonly IJwtService _jwtService;
 
-        public AccountService(UserManager<AppUser> userManager, IMapper mapper = null, IImageService imageService = null)
+        public AccountService(UserManager<AppUser> userManager, IEmailService emailService,  IJwtService jwtService, IMapper mapper = null, IImageService imageService = null)
         {
             _userManager = userManager;
             _mapper = mapper;
             _imageService = imageService;
+            _emailService = emailService;
+            _jwtService = jwtService;
         }
 
         public async Task<ServiceResponse> RegisterAsync(RegisterDto dto)
@@ -35,6 +48,12 @@ namespace Web_api.BLL.Services.Account
             {
                 return ServiceResponse.Error("Ім'я користувача не унікальне");
             }
+
+            var user = new AppUser
+            {
+                UserName = dto.UserName,
+                Email = dto.Email
+            };
 
             var entity = _mapper.Map<AppUser>(dto);
 
@@ -71,7 +90,9 @@ namespace Web_api.BLL.Services.Account
 
             if (await IsCorrectPasswordAsync(dto))
             {
-                return ServiceResponse.Success("Успішний вхід");
+                string jwtToken = _jwtService.GenerateJwtToken(user);
+
+                return ServiceResponse.Success("Успішний вхід", jwtToken);
             }
 
             return ServiceResponse.Error("Пароль вказано не вірно");

@@ -12,6 +12,12 @@ using Web_api.BLL.Services.Image;
 using Web_api.BLL;
 using FluentValidation;
 using Web_api.BLL.Validators.Account;
+using Web_api.BLL.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Web_api.BLL.Services.EmailService;
+using Web_api.BLL.Services.Jwt;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +29,9 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+
 builder.Services.AddControllers();
 
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterValidator>();
@@ -36,6 +45,38 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql("name=PostgresLocal");
 });
 
+// add jwt (валіція токену)
+string secretKey = builder.Configuration["JwtSettings:SecretKey"]
+    ?? throw new ArgumentNullException("jwt secret key is null");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = true,
+            ValidateIssuer = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            RequireExpirationTime = true,
+            ClockSkew = TimeSpan.Zero,
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        };
+    });
+
+// Configure
+var emailSection = builder.Configuration.GetSection("EmailSettings");
+builder.Services.Configure<EmailSettings>(emailSection);
+
+
+var jwtSection = builder.Configuration.GetSection("JwtSettings");
+builder.Services.Configure<JwtSettings>(jwtSection);
 
 // Add identity
 builder.Services
@@ -87,6 +128,7 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
