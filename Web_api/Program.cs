@@ -18,6 +18,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Web_api.BLL.Services.EmailService;
 using Web_api.BLL.Services.Jwt;
+using Serilog;
+using Web_api.MiddleWares;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +46,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql("name=PostgresLocal");
 });
+
+// Logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+// Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File("Logs/requests.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // add jwt (валіція токену)
 string secretKey = builder.Configuration["JwtSettings:SecretKey"]
@@ -125,6 +139,8 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(imagesPath),
     RequestPath = "/images"
 });
+
+app.UseMiddleware<LoggingMiddleware>();
 
 app.UseHttpsRedirection();
 
